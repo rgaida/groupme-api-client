@@ -782,6 +782,36 @@ class Client {
         return $this->post('/users/sms_mode/delete');
     }
 
+    // ADDITIONAL METHODS
+
+    /**
+     * Looks up member ids and member name positions
+     * in the message string and returns a mentions
+     * attachment
+     * 
+     * @param int      $target_group Group id to send the message to
+     * @param string[] $members      Member names to mention
+     * @param string   $message      Message text
+     * 
+     * @return array Mentions attachment
+     */
+    public function getMentionsAttachment($target_group, $members, $message) {
+        $loci = AttachmentUtils::getUsernamePositions($message, $members);
+        
+        $group_members = $this->getGroupMembers($target_group);
+
+        $member_ids = array();
+
+        foreach ($group_members as $group_member) {
+            $name = $group_member['nickname'];
+            $id = $group_member['user_id'];
+
+            if(in_array($name, $members)) $member_ids[] = $id;
+        }
+
+        return AttachmentUtils::makeMentionsAttachment($member_ids, $loci);
+    }
+
     // CORE METHODS
 
     /**
