@@ -1,17 +1,23 @@
 {
-    "name": "emilh91/groupme-api-client",
+    "name": "rgaida/groupme-api-client",
     "type": "library",
     "description": "GroupMe API Client",
     "keywords": ["groupme", "api", "client", "wrapper"],
-    "homepage": "https://github.com/emilh91/groupme-api-client",
+    "homepage": "https://github.com/rgaida/groupme-api-client",
     "license": "MIT",
     "authors": [
-        {
-            "name": "Emil Huseynaliev",
-            "email": "admin@emilh.net",
-            "homepage": "https://emilh.net",
-            "role": "Developer"
-        }
+      {
+        "name": "Emil Huseynaliev",
+        "email": "admin@emilh.net",
+        "homepage": "https://emilh.net",
+        "role": "Developer"
+      },
+      {
+        "name": "Roland Gaida",
+        "email": "r.gaida@mailbox.org",
+        "homepage": "https://rgaida.net",
+        "role": "Developer"
+      }
     ],
     "require": {
         "php": ">=5.3.0"
