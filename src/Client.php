@@ -94,7 +94,10 @@ class Client {
      *
      * @return string[] API result
      */
-    public function sendBotMessage($bot_id, $text, array $attachments=array()) {
+    public function sendBotMessage($bot_id, $text, array $attachments = array()) {
+
+        $attachments = $this->verifyAttachments($attachments);
+
         $payload = array(
             'bot_id' => $bot_id,
             'text' => $text,
@@ -220,6 +223,8 @@ class Client {
      */
     public function sendDirectMessage($other_user_id, $text, array $attachments=array(),
         $source_guid=null) {
+
+        $attachments = $this->verifyAttachments($attachments);
 
         $message_info = array(
             'recipient_id' => $other_user_id,
@@ -714,6 +719,8 @@ class Client {
     public function sendGroupMessage($group_id, $text, $source_guid=null,
         array $attachments=array()) {
 
+        $attachments = $this->verifyAttachments($attachments);
+
         $message_info = array(
             'text' => $text,
             'source_guid' => $source_guid ?: "G$group_id-" . date('YmdHis-') . uniqid(),
@@ -797,19 +804,31 @@ class Client {
      */
     public function getMentionsAttachment($target_group, $members, $message) {
         $loci = AttachmentUtils::getUsernamePositions($message, $members);
-        
-        $group_members = $this->getGroupMembers($target_group);
 
+        $group_members = $this->getGroupMembers($target_group);
+        
         $member_ids = array();
 
         foreach ($group_members as $group_member) {
             $name = $group_member['nickname'];
             $id = $group_member['user_id'];
 
-            if(in_array($name, $members)) $member_ids[] = $id;
+            if(in_array($name, $members)) $member_ids[$name] = $id;
         }
 
-        return AttachmentUtils::makeMentionsAttachment($member_ids, $loci);
+        $res = array('ids' => array(), 'loc' => array());
+
+        // only use text positions from users who exist in the group
+
+        foreach(array_keys($member_ids) as $index) {
+            $res['ids'][] = $member_ids[$index];
+            $res['loc'][] = $loci[$index];
+        }
+
+        if (count($res['ids']) > 0)
+            return AttachmentUtils::makeMentionsAttachment($res['ids'], $res['loc']);
+        else
+            return NULL;
     }
 
     // CORE METHODS
@@ -890,6 +909,25 @@ class Client {
         }
 
         return json_decode($result, true);
+    }
+
+    /**
+     * Removes invalid attachments
+     * 
+     * @param array $attachments 
+     * 
+     * @return array Verified attachments
+     */
+    private function verifyAttachments($attachments) {
+        $valid_attachments = array();
+
+        foreach ($attachments as $attachment) {
+            if (!is_null($attachment['type'])) {
+                $valid_attachments[] = $attachment;
+            }
+        }
+
+        return $valid_attachments;
     }
 
     // CACHE METHODS

@@ -43,7 +43,8 @@ class AttachmentUtils {
     }
 
     /**
-     * Gets text position tuples for the mentions attachment
+     * Gets username text position tuples for the mentions attachment
+     * indexed by username
      * 
      * @param mixed $txt       Message text including user mention(s)
      * @param mixed $usernames User name(s) of mentioned user(s)
@@ -60,7 +61,7 @@ class AttachmentUtils {
 
             if ($pos === FALSE) break;
 
-            $loci[] = array($pos, strlen($mention));
+            $loci[$username] = array($pos, strlen($mention));
         }
 
         return $loci;
