@@ -992,6 +992,8 @@ class Client {
      * @return array Verified attachments
      */
     private function verifyAttachments($attachments) {
+        if (is_null($attachments)) return array();
+
         $valid_attachments = array();
 
         foreach ($attachments as $attachment) {
