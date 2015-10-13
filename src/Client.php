@@ -16,7 +16,7 @@ class Client {
     /**
      * Maximum length of group descriptions
      */
-    const MAX_GRP_DESC_LEN       = 255;
+    const MAX_GROUP_DESC_LEN       = 255;
 
     const HTTP_OK          = 200;
     const HTTP_BAD_REQUEST = 400;
@@ -104,6 +104,21 @@ class Client {
             'attachments' => $attachments
         );
         return $this->post('/bots/post', $payload);
+    }
+    
+    /**
+     * Parses the message text and then sends it from a bot
+     *
+     * @param int    $bot_id Bot id
+     * @param string $text   Message text
+     *
+     * @return mixed
+     */
+    public function parseBotMessage($bot_id, $text) {
+        $emojification = \GroupMeApi\EmojiUtils::extractEmojiNamesFromText($text);
+        $emoji_attachment = \GroupMeApi\AttachmentUtils::makeEmojiAttachment($emojification['charmap']);
+
+        return $this->sendBotMessage($bot_id, $emojification['text'], array($emoji_attachment));
     }
 
     /**
@@ -236,6 +251,23 @@ class Client {
         $payload = array('direct_message' => $message_info);
         return $this->post('/direct_messages', $payload);
     }
+    
+    /**
+     * Parses the message text and then sends it to another user
+     *
+     * @param int    $other_user_id The other participant
+     * @param string $text          Message text
+     * @param string $source_guid   Unique id
+     *
+     * @return mixed
+     */
+    public function parseDirectMessage($other_user_id, $text, $source_guid=null) {
+        $emojification = \GroupMeApi\EmojiUtils::extractEmojiNamesFromText($text);
+        $emoji_attachment = \GroupMeApi\AttachmentUtils::makeEmojiAttachment($emojification['charmap']);
+        
+        return $this->sendDirectMessage($other_user_id, $emojification['text'], 
+            array($emoji_attachment), $source_guid);
+    }
 
     /**
      * Likes a message
@@ -269,21 +301,21 @@ class Client {
      * Checks if the authenticated user is a member
      * of a certain group
      *
-     * @param mixed $grp Group name or group id
+     * @param mixed $group Group name or group id
      *
      * @return bool
      */
-    public function isMemberOfGroup($grp) {
+    public function isMemberOfGroup($group) {
         $res = $this->getAllGroups();
 
         if($res['meta']['code'] == self::HTTP_OK) {
-            foreach($res['response'] as $group) {
-                if ((is_numeric($grp) && $group['id'] == $grp) ||
-                    (is_string($grp) && $group['name'] == $grp)) return TRUE;
+            foreach($res['response'] as $g) {
+                if ((is_numeric($group) && $g['id'] == $group) ||
+                    (is_string($group) && $g['name'] == $group)) return true;
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
@@ -404,7 +436,7 @@ class Client {
                 self::MAX_PRI_NAME_LEN) ? strlen($name) : self::MAX_PRI_NAME_LEN),
 
             'description' => substr($description, 0, (strlen($description) <=
-                self::MAX_GRP_DESC_LEN) ? strlen($description) : self::MAX_GRP_DESC_LEN),
+                self::MAX_GROUP_DESC_LEN) ? strlen($description) : self::MAX_GROUP_DESC_LEN),
 
             'image_url' => $image_url,
             'share' => boolval($share)
@@ -716,8 +748,8 @@ class Client {
      *
      * @return mixed
      */
-    public function sendGroupMessage($group_id, $text, $source_guid=null,
-        array $attachments=array()) {
+    public function sendGroupMessage($group_id, $text, array $attachments=array(),
+        $source_guid=null) {
 
         $attachments = $this->verifyAttachments($attachments);
 
@@ -728,6 +760,23 @@ class Client {
         );
         $payload = array('message' => $message_info);
         return $this->post("/groups/$group_id/messages", $payload);
+    }
+    
+    /**
+     * Parses the message text and then sends it to a group
+     *
+     * @param int    $group_id    Group id
+     * @param string $text        Message text
+     * @param string $source_guid Unique id
+     *
+     * @return mixed
+     */
+    public function parseGroupMessage($group_id, $text, $source_guid=null) {
+        $emojification = \GroupMeApi\EmojiUtils::extractEmojiNamesFromText($text);
+        $emoji_attachment = \GroupMeApi\AttachmentUtils::makeEmojiAttachment($emojification['charmap']);
+
+        return $this->sendGroupMessage($group_id, $emojification['text'], 
+            array($emoji_attachment), $source_guid);
     }
 
     // USER METHODS
@@ -795,19 +844,21 @@ class Client {
      * Looks up a member's id within a group
      * 
      * @param int    $group_id      Group id
-     * @param string $name          Member name
+     * @param string $member_name   Member name
      * @param bool   $caseSensitive Name is case sensitive (default NO)
      * 
-     * @return mixed   Member id or FALSE if not found
+     * @return mixed Member id or FALSE if not found
      */
-    public function getGroupMemberId($group_id, $name, $caseSensitive = FALSE) {
+    public function getGroupMemberId($group_id, $member_name, $caseSensitive = FALSE) {
         $group_members = $this->getGroupMembers($group_id);
 
-        $name = (!$caseSensitive) ? strtolower($name) : $name;
+        $member_name = (!$caseSensitive) ? strtolower($member_name) : $member_name;
 
-        foreach ($group_members as $member) {
-            $member_name = (!$caseSensitive) ? strtolower($member['nickname']) : $member['nickname'];
-            if ($member_name == $name) return $member['user_id'];
+        foreach ($group_members as $group_member) {
+            $group_member_name = (!$caseSensitive) ? 
+                strtolower($group_member['nickname']) : $group_member['nickname'];
+
+            if ($member_name == $group_member_name) return $group_member['user_id'];
         }
 
         return FALSE;
@@ -1017,7 +1068,7 @@ class Client {
      * Clears the cache
      */
     public function clearCache() {
-        $this->cache = NULL;
+        $this->cache = array();
     }
 
     /**
