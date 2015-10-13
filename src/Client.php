@@ -876,7 +876,7 @@ class Client {
      * @return array Mentions attachment
      */
     public function getMentionsAttachment($target_group, $members, $message) {
-        $loci = AttachmentUtils::getUsernamePositions($message, $members);
+        $loci = AttachmentUtils::getUsernamePositions($message, $members, '@', TRUE);
 
         $group_members = $this->getGroupMembers($target_group);
         

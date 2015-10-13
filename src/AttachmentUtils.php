@@ -52,7 +52,7 @@ class AttachmentUtils {
      * 
      * @return array[] Position and length of user names in message
      */
-    public static function getUsernamePositions($txt, $usernames, $mchar = '@') {
+    public static function getUsernamePositions($txt, $usernames, $mchar = '@', $indexed = FALSE) {
         $loci = array();
 
         foreach ($usernames as $username) {
@@ -61,7 +61,10 @@ class AttachmentUtils {
 
             if ($pos === FALSE) break;
 
-            $loci[$username] = array($pos, strlen($mention));
+            if ($indexed)
+                $loci[$username] = array($pos, strlen($mention));
+            else
+                $loci[] = array($pos, strlen($mention));
         }
 
         return $loci;
