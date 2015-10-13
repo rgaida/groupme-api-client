@@ -64,6 +64,7 @@ public function getGroupMessagesAfter($group_id, $message_id, $limit=20)
 public function getGroupMessagesSince($group_id, $message_id, $limit=20)
 public function getGroupNameById($id)
 public function getGroupIdByName($name)
+public function getGroupMemberId($group_id, $name, $caseSensitive = FALSE)
 public function isMemberOfGroup($grp)
 public function sendGroupMessage($group_id, $text, array $attachments=array(), $source_guid=null)
 ```

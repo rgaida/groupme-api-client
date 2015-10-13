@@ -792,6 +792,28 @@ class Client {
     // ADDITIONAL METHODS
 
     /**
+     * Looks up a member's id within a group
+     * 
+     * @param int    $group_id      Group id
+     * @param string $name          Member name
+     * @param bool   $caseSensitive Name is case sensitive (default NO)
+     * 
+     * @return mixed   Member id or FALSE if not found
+     */
+    public function getGroupMemberId($group_id, $name, $caseSensitive = FALSE) {
+        $group_members = $this->getGroupMembers($group_id);
+
+        $name = (!$caseSensitive) ? strtolower($name) : $name;
+
+        foreach ($group_members as $member) {
+            $member_name = (!$caseSensitive) ? strtolower($member['nickname']) : $member['nickname'];
+            if ($member_name == $name) return $member['user_id'];
+        }
+
+        return FALSE;
+    }
+
+    /**
      * Looks up member ids and member name positions
      * in the message string and returns a mentions
      * attachment
