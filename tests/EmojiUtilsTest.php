@@ -1,6 +1,8 @@
 <?php
 namespace GroupMeApi;
 
+require 'vendor/autoload.php';
+
 class EmojiUtilsTest extends \PHPUnit_Framework_TestCase {
     public function test_ShouldReturnEmojiSequenceByName() {
         $expected = array(1, 12);

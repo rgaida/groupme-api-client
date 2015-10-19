@@ -18,6 +18,11 @@ class Client {
      */
     const MAX_GROUP_DESC_LEN       = 255;
 
+    /**
+     * Maximum length of message text
+     */
+    const MAX_MESSAGE_LEN = 1000;
+
     const HTTP_OK          = 200;
     const HTTP_BAD_REQUEST = 400;
 
@@ -862,6 +867,38 @@ class Client {
         }
 
         return FALSE;
+    }
+
+    /**
+     * Splits a large message which exceeds the allowed maximum number
+     * of characters into smaller parts
+     * 
+     * @param mixed $msg 
+     * @param mixed $delimiter 
+     * @param mixed $maxlen 
+     * 
+     * @return string[]
+     */
+    public static function splitLargeMessage($msg, $delimiter = "\n", $maxlen = self::MAX_MESSAGE_LEN) {
+        if (strlen($msg) <= $maxlen) return array($msg);
+
+        $items = explode($delimiter, $msg);
+
+        $index = 0;
+        $msgLength = 0;
+        $res = array('');
+
+        foreach ($items as $item) {
+            if ($msgLength + strlen($item) >= $maxlen) {
+                $res[++$index]  = '';
+                $msgLength = 0;
+            }
+
+            $res[$index] .= $item;
+            $msgLength += strlen($item);
+        }
+
+        return $res;
     }
 
     /**
