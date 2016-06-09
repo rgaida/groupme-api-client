@@ -21,6 +21,7 @@ public function getMyBots()
 public function createBot($bot_name, $group_id, $avatar_url='', $callback_url='')
 public function sendBotMessage($bot_id, $text, array $attachments=array())
 public function parseBotMessage($bot_id, $text)
+public function getBotIdInGroup($bot_name, $group_id)
 public function destroyBot($bot_id)
 ```
 
@@ -81,7 +82,8 @@ public function disableSmsMode()
 ```
 
 ### Attachments
-When sending messages (bot, direct, or group), you can specify an array of attachments. A factory class exists to easily create attachments: `GroupMeApi\AttachmentUtils`.
+When sending messages (bot, direct, or group), you can specify an array of attachments. 
+A factory class exists to easily create attachments: `GroupMeApi\AttachmentUtils`.
 ```php
 public static function makeLocationAttachment($lat, $lng, $name='')
 public static function makeImageAttachment($image_url)
@@ -91,7 +93,11 @@ public static function makeEmojiAttachment(array $charmap)
 ```
 
 ### Emojis
-Aah, the pinnacle of modern communication... ~~To send emojis in GroupMe, you need to specify a charmap (character map) when creating the attachment. For this purpose, another factory class exists: `GroupMeApi\EmojiUtils`.~~ To send emojis without dealing with charmaps and placeholders, just write them inline and use the `parse*Message(...)` methods to send them.
+Aah, the pinnacle of modern communication... ~~To send emojis in GroupMe, you need to 
+specify a charmap (character map) when creating the attachment. For this purpose, another 
+factory class exists: `GroupMeApi\EmojiUtils`.~~ To send emojis without dealing with 
+charmaps and placeholders, just write them inline and use the `parse*Message(...)` 
+methods to send them.
 
 ```php
 require 'vendor/autoload.php';
@@ -110,5 +116,7 @@ $c = new GroupMeApi\Client('API-KEY');
 $res = $c->uploadImage('my_image_file.png', 'image/png', 'testpic');
 ```
 
-If the upload was successful, the return variable contains the image url in `$res['payload']['url']` or an error message in `$res['error'][]`.
+If the upload was successful, the return variable contains the image url 
+in `$res['payload']['url']` or an error message in `$res['error'][]`.
+
 Thanks to user [rgaida](https://github.com/rgaida) for fixing the image service!

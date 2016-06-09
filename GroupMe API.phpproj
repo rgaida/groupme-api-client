@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>GroupMe API</Name>
+    <ProjectGuid>{73c875e6-58b8-4de6-befd-43483b5f5fd9}</ProjectGuid>
+    <RootNamespace>GroupMe API</RootNamespace>
+    <OutputType>Console</OutputType>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
+    <StartupFile>sandbox.php</StartupFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>false</IncludeDebugInformation>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="sandbox.php" />
+    <Compile Include="src\AttachmentUtils.php" />
+    <Compile Include="src\Client.php" />
+    <Compile Include="src\EmojiUtils.php" />
+    <Compile Include="tests\ClientTest.php" />
+    <Compile Include="tests\EmojiUtilsTest.php" />
+    <Compile Include=".gitignore" />
+    <Compile Include="composer.json" />
+    <Compile Include="composer.lock" />
+    <Compile Include="LICENSE" />
+    <Compile Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src" />
+    <Folder Include="tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="phpunit.xml" />
+  </ItemGroup>
+</Project>

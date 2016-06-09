@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{A0786B88-2ADB-4C21-ABE8-AA2D79766269}") = "GroupMe API", "GroupMe API.phpproj", "{73C875E6-58B8-4DE6-BEFD-43483B5F5FD9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73C875E6-58B8-4DE6-BEFD-43483B5F5FD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73C875E6-58B8-4DE6-BEFD-43483B5F5FD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73C875E6-58B8-4DE6-BEFD-43483B5F5FD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73C875E6-58B8-4DE6-BEFD-43483B5F5FD9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

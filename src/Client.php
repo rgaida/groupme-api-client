@@ -70,6 +70,26 @@ class Client {
     }
 
     /**
+     * Gets the bot id of your bot within a group
+     * 
+     * @param string $bot_name  Bot name
+     * @param int    $group_id  Group id
+     * 
+     * @return string Bot id
+     */
+    public function getBotIdInGroup($bot_name, $group_id) {
+        $bots = $this->getMyBots()['response'];
+
+        foreach($bots as $bot) {
+            if ($bot['group_id'] == $group_id && $bot['name'] == $bot_name) {
+                return $bot['bot_id'];
+            }
+        }
+
+        return '';
+    }
+
+    /**
      * Creates a new bot
      *
      * @param string $bot_name     Name of the bot
@@ -110,7 +130,7 @@ class Client {
         );
         return $this->post('/bots/post', $payload);
     }
-    
+
     /**
      * Parses the message text and then sends it from a bot
      *
@@ -256,7 +276,7 @@ class Client {
         $payload = array('direct_message' => $message_info);
         return $this->post('/direct_messages', $payload);
     }
-    
+
     /**
      * Parses the message text and then sends it to another user
      *
@@ -269,8 +289,8 @@ class Client {
     public function parseDirectMessage($other_user_id, $text, $source_guid=null) {
         $emojification = \GroupMeApi\EmojiUtils::extractEmojiNamesFromText($text);
         $emoji_attachment = \GroupMeApi\AttachmentUtils::makeEmojiAttachment($emojification['charmap']);
-        
-        return $this->sendDirectMessage($other_user_id, $emojification['text'], 
+
+        return $this->sendDirectMessage($other_user_id, $emojification['text'],
             array($emoji_attachment), $source_guid);
     }
 
@@ -325,9 +345,9 @@ class Client {
 
     /**
      * Gets a group by its id
-     * 
-     * @param int $group_id 
-     * 
+     *
+     * @param int $group_id
+     *
      * @return array API response
      */
     function getGroupById($group_id) {
@@ -336,12 +356,12 @@ class Client {
 
     /**
      * Gets a group by its name
-     * 
+     *
      * There is no check for ambiguous names in place!
      * The first match will be returned.
-     * 
-     * @param mixed $name 
-     * 
+     *
+     * @param mixed $name
+     *
      * @return array API response
      */
     function getGroupByName($name) {
@@ -766,7 +786,7 @@ class Client {
         $payload = array('message' => $message_info);
         return $this->post("/groups/$group_id/messages", $payload);
     }
-    
+
     /**
      * Parses the message text and then sends it to a group
      *
@@ -780,7 +800,7 @@ class Client {
         $emojification = \GroupMeApi\EmojiUtils::extractEmojiNamesFromText($text);
         $emoji_attachment = \GroupMeApi\AttachmentUtils::makeEmojiAttachment($emojification['charmap']);
 
-        return $this->sendGroupMessage($group_id, $emojification['text'], 
+        return $this->sendGroupMessage($group_id, $emojification['text'],
             array($emoji_attachment), $source_guid);
     }
 
@@ -847,11 +867,11 @@ class Client {
 
     /**
      * Looks up a member's id within a group
-     * 
+     *
      * @param int    $group_id      Group id
      * @param string $member_name   Member name
      * @param bool   $caseSensitive Name is case sensitive (default NO)
-     * 
+     *
      * @return mixed Member id or FALSE if not found
      */
     public function getGroupMemberId($group_id, $member_name, $caseSensitive = FALSE) {
@@ -860,7 +880,7 @@ class Client {
         $member_name = (!$caseSensitive) ? strtolower($member_name) : $member_name;
 
         foreach ($group_members as $group_member) {
-            $group_member_name = (!$caseSensitive) ? 
+            $group_member_name = (!$caseSensitive) ?
                 strtolower($group_member['nickname']) : $group_member['nickname'];
 
             if ($member_name == $group_member_name) return $group_member['user_id'];
@@ -872,11 +892,11 @@ class Client {
     /**
      * Splits a large message which exceeds the allowed maximum number
      * of characters into smaller parts
-     * 
-     * @param mixed $msg 
-     * @param mixed $delimiter 
-     * @param mixed $maxlen 
-     * 
+     *
+     * @param mixed $msg
+     * @param mixed $delimiter
+     * @param mixed $maxlen
+     *
      * @return string[]
      */
     public static function splitLargeMessage($msg, $delimiter = "\n", $maxlen = self::MAX_MESSAGE_LEN) {
@@ -905,18 +925,18 @@ class Client {
      * Looks up member ids and member name positions
      * in the message string and returns a mentions
      * attachment
-     * 
+     *
      * @param int      $target_group Group id to send the message to
      * @param string[] $members      Member names to mention
      * @param string   $message      Message text
-     * 
+     *
      * @return array Mentions attachment
      */
     public function getMentionsAttachment($target_group, $members, $message) {
         $loci = AttachmentUtils::getUsernamePositions($message, $members, '@', TRUE);
 
         $group_members = $this->getGroupMembers($target_group);
-        
+
         $member_ids = array();
 
         foreach ($group_members as $group_member) {
@@ -1023,9 +1043,9 @@ class Client {
 
     /**
      * Removes invalid attachments
-     * 
-     * @param array $attachments 
-     * 
+     *
+     * @param array $attachments
+     *
      * @return array Verified attachments
      */
     private function verifyAttachments($attachments) {
