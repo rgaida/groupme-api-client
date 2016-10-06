@@ -71,10 +71,10 @@ class Client {
 
     /**
      * Gets the bot id of your bot within a group
-     * 
+     *
      * @param string $bot_name  Bot name
      * @param int    $group_id  Group id
-     * 
+     *
      * @return string Bot id
      */
     public function getBotIdInGroup($bot_name, $group_id) {
@@ -914,7 +914,7 @@ class Client {
                 $msgLength = 0;
             }
 
-            $res[$index] .= $item;
+            $res[$index] .= "$item\n";
             $msgLength += strlen($item);
         }
 
