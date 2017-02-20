@@ -915,7 +915,7 @@ class Client {
             }
 
             $res[$index] .= "$item$delimiter";
-            $msgLength += strlen($item);
+            $msgLength += strlen($item) + 1;
         }
 
         return $res;
