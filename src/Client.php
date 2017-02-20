@@ -125,7 +125,7 @@ class Client {
 
         $payload = array(
             'bot_id' => $bot_id,
-            'text' => $text,
+            'text' => $this->encodeToUtf8($text),
             'attachments' => $attachments
         );
         return $this->post('/bots/post', $payload);
@@ -268,7 +268,7 @@ class Client {
 
         $message_info = array(
             'recipient_id' => $other_user_id,
-            'text' => $text,
+            'text' => $this->encodeToUtf8($text),
             'source_guid' => $source_guid ?: "D$other_user_id-".
                 date('YmdHis-') . uniqid(),
             'attachments' => $attachments
@@ -1159,4 +1159,17 @@ class Client {
         return $data;
     }
 
+    // MISC METHODS
+
+    /**
+     * Converts an ISO string to UTF-8
+     * 
+     * @param string $string 
+     * 
+     * @return string UTF-8 encoded string
+     */
+    private function encodeToUtf8($string) {
+        return mb_convert_encoding($string, "UTF-8", 
+            mb_detect_encoding($string, "UTF-8, ISO-8859-1, ISO-8859-15", true));
+    }
 }
