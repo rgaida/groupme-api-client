@@ -909,12 +909,12 @@ class Client {
         $res = array('');
 
         foreach ($items as $item) {
-            if ($msgLength + strlen($item) >= $maxlen) {
+            if ($msgLength + strlen($item) + 1 >= $maxlen) {
                 $res[++$index]  = '';
                 $msgLength = 0;
             }
 
-            $res[$index] .= "$item\n";
+            $res[$index] .= "$item$delimiter";
             $msgLength += strlen($item);
         }
 
