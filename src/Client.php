@@ -922,6 +922,27 @@ class Client {
     }
 
     /**
+     * Returns a mentions attachment for all members of a group if
+     * message starts with "@all"
+     * 
+     * @param int $target_group   Group id to send the message to
+     */
+    public function getMentionsAllAttachment($target_group, $message) {
+        if (substr($message, 0, 4) != "@all") return NULL;
+
+        $group_members = $this->getGroupMembers($target_group);
+        
+        $res= array();
+
+        foreach ($group_members as $group_member) {
+            $res['ids'][] = $group_member['user_id'];
+            $res['loc'][] = array(0, 4); // "@all ..."
+        }
+
+        return AttachmentUtils::makeMentionsAttachment($res['ids'], $res['loc']);
+    }
+
+    /**
      * Looks up member ids and member name positions
      * in the message string and returns a mentions
      * attachment
